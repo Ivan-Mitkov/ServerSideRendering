@@ -1,11 +1,18 @@
 import React from "react";
 import { renderToString } from "react-dom/server";
-import Home from "../client/components/Home";
+import { StaticRouter } from "react-router-dom";
+import Routes from "../client/Routes";
 
-const renderer = () => {
-  const content = renderToString(<Home />);
-  return `
-  <html>
+//pass req object from server
+const renderer = (req) => {
+    console.log('static routes: req.path',req.path)
+  const content = renderToString(
+      //get url from req object from express 
+    <StaticRouter location={req.path} context={{}}>
+      <Routes />
+    </StaticRouter>
+  );
+  return `<html>
      <head></head>
     <body>
         <div id="root">

@@ -10,8 +10,11 @@ import renderer from "./helpers/renderer";
 const app = express();
 //tell express to open public folder to the world
 app.use(express.static("public"));
-app.get("/", (req, res) => {
-  res.send(renderer());
+//look for all routes
+app.get("*", (req, res) => {
+    console.log('req.path:    ',req.path)
+  //static router need to know the current path, BrowserRouter knows this out of the box
+  res.send(renderer(req));
 });
 
 app.listen(3000, () => console.log("app listen on port 3000"));

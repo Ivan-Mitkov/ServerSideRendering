@@ -95,12 +95,15 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var app = (0, _express2.default)();
 //tell express to open public folder to the world
 app.use(_express2.default.static("public"));
-app.get("/", function (req, res) {
-  res.send((0, _renderer2.default)());
+//look for all routes
+app.get("*", function (req, res) {
+    console.log('req.path:    ', req.path);
+    //static router need to know the current path, BrowserRouter knows this out of the box
+    res.send((0, _renderer2.default)(req));
 });
 
 app.listen(3000, function () {
-  return console.log("app listen on port 3000");
+    return console.log("app listen on port 3000");
 });
 
 /***/ }),
@@ -170,18 +173,70 @@ var _react2 = _interopRequireDefault(_react);
 
 var _server = __webpack_require__(3);
 
+var _reactRouterDom = __webpack_require__(6);
+
+var _Routes = __webpack_require__(7);
+
+var _Routes2 = _interopRequireDefault(_Routes);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+//pass req object from server
+var renderer = function renderer(req) {
+    console.log('static routes: req.path', req.path);
+    var content = (0, _server.renderToString)(
+    //get url from req object from express 
+    _react2.default.createElement(
+        _reactRouterDom.StaticRouter,
+        { location: req.path, context: {} },
+        _react2.default.createElement(_Routes2.default, null)
+    ));
+    return "<html>\n     <head></head>\n    <body>\n        <div id=\"root\">\n            " + content + "\n            <script src=\"bundle.js\"></script>\n        </div>\n    </body>\n  </html>\n  ";
+};
+
+exports.default = renderer;
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports) {
+
+module.exports = require("react-router-dom");
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRouterDom = __webpack_require__(6);
+
 var _Home = __webpack_require__(4);
 
 var _Home2 = _interopRequireDefault(_Home);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var renderer = function renderer() {
-    var content = (0, _server.renderToString)(_react2.default.createElement(_Home2.default, null));
-    return "\n  <html>\n     <head></head>\n    <body>\n        <div id=\"root\">\n            " + content + "\n            <script src=\"bundle.js\"></script>\n        </div>\n    </body>\n  </html>\n  ";
+var Routes = function Routes() {
+    return _react2.default.createElement(
+        'div',
+        null,
+        _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/', component: _Home2.default }),
+        _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/dummy', component: function component() {
+                return 'Dummy';
+            } })
+    );
 };
 
-exports.default = renderer;
+exports.default = Routes;
 
 /***/ })
 /******/ ]);
