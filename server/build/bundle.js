@@ -22708,7 +22708,7 @@ var Home = function Home(props) {
     return _react2.default.createElement(
         'div',
         null,
-        'I\'m the Home component'
+        'I\'m the Home component with nodemon'
     );
 };
 
