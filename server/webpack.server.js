@@ -8,7 +8,7 @@ const config = {
   //nodeJS, not for a browser
   target: "node",
 
-  //what is the roo file of server app
+  //what is the root file of server app
   entry: "./src/index.js",
 
   //where to put outfile that is generated
