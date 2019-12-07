@@ -82,6 +82,8 @@ module.exports = require("react-router-dom");
 "use strict";
 
 
+__webpack_require__(18);
+
 var _express = __webpack_require__(3);
 
 var _express2 = _interopRequireDefault(_express);
@@ -191,6 +193,10 @@ var _Home = __webpack_require__(7);
 
 var _Home2 = _interopRequireDefault(_Home);
 
+var _UsersList = __webpack_require__(17);
+
+var _UsersList2 = _interopRequireDefault(_UsersList);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Routes = function Routes() {
@@ -198,9 +204,7 @@ var Routes = function Routes() {
         'div',
         null,
         _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/', component: _Home2.default }),
-        _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/dummy', component: function component() {
-                return 'Dummy';
-            } })
+        _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/users', component: _UsersList2.default })
     );
 };
 
@@ -334,8 +338,6 @@ var _axios2 = _interopRequireDefault(_axios);
 
 var _config = __webpack_require__(16);
 
-var _config2 = _interopRequireDefault(_config);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
@@ -350,11 +352,12 @@ var fetchUsers = exports.fetchUsers = function fetchUsers() {
                     switch (_context.prev = _context.next) {
                         case 0:
                             _context.next = 2;
-                            return _axios2.default.get(_config2.default + 'users');
+                            return _axios2.default.get(_config.API_URL + 'users');
 
                         case 2:
                             res = _context.sent;
 
+                            // console.log('actions', res.data)
                             dispatch({
                                 type: FETCH_USERS,
                                 payload: res
@@ -392,6 +395,106 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 var API_URL = exports.API_URL = "https://react-ssr-api.herokuapp.com/";
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.UsersList = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRedux = __webpack_require__(12);
+
+var _index = __webpack_require__(14);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Users = function Users(props) {
+  //   console.log("Users", props.users);
+  var resultingUsers = [];
+  if (Array.isArray(props.users)) {
+    resultingUsers = props.users.map(function (user) {
+      // console.log(user)
+      return _react2.default.createElement(
+        "li",
+        { key: user.id },
+        user.name
+      );
+    });
+  }
+  //   console.log('users to print:',resultingUsers)
+  return resultingUsers;
+};
+
+var UsersList = exports.UsersList = function (_Component) {
+  _inherits(UsersList, _Component);
+
+  function UsersList() {
+    _classCallCheck(this, UsersList);
+
+    return _possibleConstructorReturn(this, (UsersList.__proto__ || Object.getPrototypeOf(UsersList)).apply(this, arguments));
+  }
+
+  _createClass(UsersList, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      // console.log("this.props usersList", this.props);
+      this.props.fetchUsers();
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      // console.log("render: ", this.props.users);
+      var users = this.props.users;
+
+      return _react2.default.createElement(
+        "div",
+        null,
+        _react2.default.createElement(
+          "div",
+          null,
+          "Users list"
+        ),
+        _react2.default.createElement(
+          "ul",
+          null,
+          _react2.default.createElement(Users, { users: users })
+        )
+      );
+    }
+  }]);
+
+  return UsersList;
+}(_react.Component);
+
+var mapStateToProps = function mapStateToProps(state) {
+  //   console.log("map state to props state: ", state);
+  return { users: state };
+};
+exports.default = (0, _reactRedux.connect)(mapStateToProps, { fetchUsers: _index.fetchUsers })(UsersList);
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports) {
+
+module.exports = require("babel-polyfill");
 
 /***/ })
 /******/ ]);

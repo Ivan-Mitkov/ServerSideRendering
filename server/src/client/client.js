@@ -1,4 +1,5 @@
 //starter point for the client side app
+import 'babel-polyfill';
 
 import React from "react";
 import ReactDOM from "react-dom";

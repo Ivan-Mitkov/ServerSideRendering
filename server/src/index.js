@@ -1,4 +1,4 @@
-
+import 'babel-polyfill';
 
 //webpack is doing it's magic by looking after server side js:)
 import express from "express";
