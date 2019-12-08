@@ -253,7 +253,7 @@ var renderer = function renderer(req, store) {
       )
     )
   ));
-  return "<html>\n     <head></head>\n    <body>\n        <div id=\"root\">\n            " + content + "\n            <script src=\"bundle.js\"></script>\n        </div>\n    </body>\n  </html>\n  ";
+  return "<html>\n     <head></head>\n    <body>\n        <div id=\"root\">" + content + "</div>\n        <script>\n            window.INITIAL_STATE=" + JSON.stringify(store.getState()) + "\n            </script>\n       <script src=\"bundle.js\"></script>\n    </body>\n  </html>\n  ";
 };
 
 exports.default = renderer;
