@@ -3,9 +3,11 @@ import { connect } from "react-redux";
 import { fetchUsers } from "../actions/index";
 
 const Users = props => {
-  //   console.log("Users", props.users);
+// console.log('Users props', props)
   let resultingUsers = [];
   if (Array.isArray(props.users)) {
+    // console.log('Users props', props.users)
+
     resultingUsers = props.users.map(user => {
       // console.log(user)
       return <li key={user.id}>{user.name}</li>;
@@ -35,9 +37,9 @@ export class UsersList extends Component {
   }
 }
 
-const mapStateToProps = state => {
-  //   console.log("map state to props state: ", state);
-  return { users: state };
+const mapStateToProps = ({users}) => {
+    // console.log("map state to props state users: ", users);
+  return {users};
 };
 
  const loadData = store => {

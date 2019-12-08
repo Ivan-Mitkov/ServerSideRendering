@@ -89,7 +89,7 @@ module.exports = require("react-redux");
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
@@ -97,40 +97,76 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 // import axios from 'axios';
 // import{ API_URL }from '../../../config';
 
-var FETCH_USERS = exports.FETCH_USERS = 'fetch_users';
+var FETCH_USERS = exports.FETCH_USERS = "fetch_users";
 var fetchUsers = exports.fetchUsers = function fetchUsers() {
-    return function () {
-        var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(dispatch, getState, axiosInstance) {
-            var res;
-            return regeneratorRuntime.wrap(function _callee$(_context) {
-                while (1) {
-                    switch (_context.prev = _context.next) {
-                        case 0:
-                            _context.next = 2;
-                            return axiosInstance.get('/users');
+  return function () {
+    var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(dispatch, getState, axiosInstance) {
+      var res;
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              _context.next = 2;
+              return axiosInstance.get("/users");
 
-                        case 2:
-                            res = _context.sent;
+            case 2:
+              res = _context.sent;
 
-                            // console.log('actions', res.data)
-                            dispatch({
-                                type: FETCH_USERS,
-                                payload: res
+              //   console.log('actions', res.data)
+              dispatch({
+                type: FETCH_USERS,
+                payload: res
+              });
 
-                            });
+            case 4:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee, undefined);
+    }));
 
-                        case 4:
-                        case 'end':
-                            return _context.stop();
-                    }
-                }
-            }, _callee, undefined);
-        }));
+    return function (_x, _x2, _x3) {
+      return _ref.apply(this, arguments);
+    };
+  }();
+};
 
-        return function (_x, _x2, _x3) {
-            return _ref.apply(this, arguments);
-        };
-    }();
+var FETCH_CURRENT_USER = exports.FETCH_CURRENT_USER = "fetch_current_user";
+
+var fetchCurrentUser = exports.fetchCurrentUser = function fetchCurrentUser() {
+  return function () {
+    var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(dispatch, getState, axiosInstance) {
+      var res;
+      return regeneratorRuntime.wrap(function _callee2$(_context2) {
+        while (1) {
+          switch (_context2.prev = _context2.next) {
+            case 0:
+              _context2.next = 2;
+              return axiosInstance.get("/current_user");
+
+            case 2:
+              res = _context2.sent;
+
+              // console.log('action url',res.config.url)
+              // console.log('action data',res.data)
+              dispatch({
+                type: FETCH_CURRENT_USER,
+                payload: res
+              });
+
+            case 4:
+            case "end":
+              return _context2.stop();
+          }
+        }
+      }, _callee2, undefined);
+    }));
+
+    return function (_x4, _x5, _x6) {
+      return _ref2.apply(this, arguments);
+    };
+  }();
 };
 
 /***/ }),
@@ -162,8 +198,6 @@ var _renderer2 = _interopRequireDefault(_renderer);
 
 var _config = __webpack_require__(13);
 
-var _config2 = _interopRequireDefault(_config);
-
 var _createStore = __webpack_require__(14);
 
 var _createStore2 = _interopRequireDefault(_createStore);
@@ -176,7 +210,7 @@ var app = (0, _express2.default)();
 
 
 //webpack is doing it's magic by looking after server side js:)
-app.use("/api", (0, _expressHttpProxy2.default)("" + _config2.default, {
+app.use("/api", (0, _expressHttpProxy2.default)("" + _config.API_URL, {
   proxyReqOptDecorator: function proxyReqOptDecorator(opts) {
     opts.headers["x-forwarded-host"] = "localhost:3000";
     return opts;
@@ -189,6 +223,7 @@ app.use(_express2.default.static("public"));
 app.get("*", function (req, res) {
   //pass req object to create store to get the cookies later
   var store = (0, _createStore2.default)(req);
+
   var promises = (0, _reactRouterConfig.matchRoutes)(_Routes2.default, req.path).map(function (_ref) {
     var route = _ref.route;
 
@@ -341,7 +376,7 @@ module.exports = require("axios");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-var API_URL = exports.API_URL = "https://react-ssr-api.herokuapp.com";
+var API_URL = exports.API_URL = "http://react-ssr-api.herokuapp.com";
 
 /***/ }),
 /* 14 */
@@ -366,12 +401,13 @@ var _axios2 = _interopRequireDefault(_axios);
 
 var _config = __webpack_require__(13);
 
-var _usersReducer = __webpack_require__(17);
+var _reducers = __webpack_require__(27);
 
-var _usersReducer2 = _interopRequireDefault(_usersReducer);
+var _reducers2 = _interopRequireDefault(_reducers);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+// console.log('createStore',`${API_URL}`)
 //get req from index.js
 exports.default = function (req) {
   var axiosInstance = _axios2.default.create({
@@ -380,7 +416,7 @@ exports.default = function (req) {
       cookie: req.get("cookie") || ""
     }
   });
-  var store = (0, _redux.createStore)(_usersReducer2.default, {}, (0, _redux.applyMiddleware)(_reduxThunk2.default.withExtraArgument(axiosInstance)));
+  var store = (0, _redux.createStore)(_reducers2.default, {}, (0, _redux.applyMiddleware)(_reduxThunk2.default.withExtraArgument(axiosInstance)));
   return store;
 };
 
@@ -407,14 +443,15 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _index = __webpack_require__(3);
+var _actions = __webpack_require__(3);
 
 exports.default = function () {
   var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
   var action = arguments[1];
 
+  // console.log('user reducer:  ',action.payload)
   switch (action.type) {
-    case _index.FETCH_USERS:
+    case _actions.FETCH_USERS:
       return action.payload.data;
     default:
       return state;
@@ -498,9 +535,11 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var Users = function Users(props) {
-  //   console.log("Users", props.users);
+  // console.log('Users props', props)
   var resultingUsers = [];
   if (Array.isArray(props.users)) {
+    // console.log('Users props', props.users)
+
     resultingUsers = props.users.map(function (user) {
       // console.log(user)
       return _react2.default.createElement(
@@ -555,9 +594,11 @@ var UsersList = exports.UsersList = function (_Component) {
   return UsersList;
 }(_react.Component);
 
-var mapStateToProps = function mapStateToProps(state) {
-  //   console.log("map state to props state: ", state);
-  return { users: state };
+var mapStateToProps = function mapStateToProps(_ref) {
+  var users = _ref.users;
+
+  // console.log("map state to props state users: ", users);
+  return { users: users };
 };
 
 var loadData = function loadData(store) {
@@ -592,7 +633,7 @@ module.exports = require("express-http-proxy");
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 
 var _react = __webpack_require__(0);
@@ -601,20 +642,159 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactRouterConfig = __webpack_require__(18);
 
+var _Header = __webpack_require__(26);
+
+var _Header2 = _interopRequireDefault(_Header);
+
+var _actions = __webpack_require__(3);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var App = function App(_ref) {
-    var route = _ref.route;
+  var route = _ref.route;
 
-    return _react2.default.createElement(
-        'div',
-        null,
-        'App is Here',
-        (0, _reactRouterConfig.renderRoutes)(route.routes)
-    );
+  return _react2.default.createElement(
+    "div",
+    null,
+    _react2.default.createElement(_Header2.default, null),
+    (0, _reactRouterConfig.renderRoutes)(route.routes)
+  );
 };
 
-exports.default = { component: App };
+exports.default = {
+  component: App,
+  loadData: function loadData(_ref2) {
+    var dispatch = _ref2.dispatch;
+    return dispatch((0, _actions.fetchCurrentUser)());
+  }
+};
+
+/***/ }),
+/* 26 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRouterDom = __webpack_require__(1);
+
+var _reactRedux = __webpack_require__(2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Header = function Header(_ref) {
+  var auth = _ref.auth;
+
+  console.log("props", auth);
+  var authButton = auth ? _react2.default.createElement(
+    "a",
+    { href: "/api/logout" },
+    "Logout"
+  ) : _react2.default.createElement(
+    "a",
+    { href: "/api/auth/google" },
+    "Login"
+  );
+  return _react2.default.createElement(
+    "div",
+    { style: { margin: '0', padding: '18px', width: '100%', display: 'flex', justifyContent: 'space-evenly', border: '2px solid #eee' } },
+    _react2.default.createElement(
+      "div",
+      { style: { flexGrow: '3' } },
+      _react2.default.createElement(
+        _reactRouterDom.Link,
+        { to: "/" },
+        "SSR"
+      )
+    ),
+    _react2.default.createElement(
+      "div",
+      { style: { marginRight: '20px', flexGrow: '1', display: 'flex', justifyContent: 'space-between' } },
+      _react2.default.createElement(
+        _reactRouterDom.Link,
+        { to: "/users" },
+        "Users"
+      ),
+      _react2.default.createElement(
+        _reactRouterDom.Link,
+        { to: "/admins" },
+        "Admins"
+      ),
+      authButton
+    )
+  );
+};
+
+function mapStateToProps(_ref2) {
+  var auth = _ref2.auth;
+
+  //   console.log("state", auth);
+  return { auth: auth };
+}
+
+exports.default = (0, _reactRedux.connect)(mapStateToProps)(Header);
+
+/***/ }),
+/* 27 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _redux = __webpack_require__(15);
+
+var _usersReducer = __webpack_require__(17);
+
+var _usersReducer2 = _interopRequireDefault(_usersReducer);
+
+var _authReducer = __webpack_require__(28);
+
+var _authReducer2 = _interopRequireDefault(_authReducer);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = (0, _redux.combineReducers)({
+    users: _usersReducer2.default,
+    auth: _authReducer2.default
+});
+
+/***/ }),
+/* 28 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function () {
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+    var action = arguments[1];
+
+    // console.log('reducer',action.payload?action.payload.data:'no data')
+    switch (action.type) {
+        case _actions.FETCH_CURRENT_USER:
+            return action.payload.data || false;
+        default:
+            return state;
+    }
+};
+
+var _actions = __webpack_require__(3);
 
 /***/ })
 /******/ ]);

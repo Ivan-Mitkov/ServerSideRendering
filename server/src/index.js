@@ -6,7 +6,7 @@ import { matchRoutes } from "react-router-config";
 import proxy from "express-http-proxy";
 import Routes from "./client/Routes";
 import renderer from "./helpers/renderer";
-import API_URL from "../config";
+import {API_URL} from "../config";
 import createStore from "./helpers/createStore";
 
 const app = express();
@@ -28,6 +28,7 @@ app.use(express.static("public"));
 app.get("*", (req, res) => {
   //pass req object to create store to get the cookies later
   const store = createStore(req);
+
   const promises = matchRoutes(Routes, req.path).map(({ route }) => {
     // console.log(route)
     return route.loadData ? route.loadData(store) : null;
