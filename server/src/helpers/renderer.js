@@ -7,12 +7,13 @@ import serialize from "serialize-javascript";
 import Routes from "../client/Routes";
 
 //pass req object from server
-const renderer = (req, store) => {
+const renderer = (req, store,context) => {
   // console.log("static routes: req.path", req.path);
   const content = renderToString(
     <Provider store={store}>
       {/* //get url from req object from express */}
-      <StaticRouter location={req.path} context={{}}>
+      {/* //passing context from index.js for errors */}
+      <StaticRouter location={req.path} context={context}>
         <div>{renderRoutes(Routes)}</div>
       </StaticRouter>
     </Provider>

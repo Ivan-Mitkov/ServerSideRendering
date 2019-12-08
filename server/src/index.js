@@ -6,7 +6,7 @@ import { matchRoutes } from "react-router-config";
 import proxy from "express-http-proxy";
 import Routes from "./client/Routes";
 import renderer from "./helpers/renderer";
-import {API_URL} from "../config";
+import { API_URL } from "../config";
 import createStore from "./helpers/createStore";
 
 const app = express();
@@ -38,8 +38,14 @@ app.get("*", (req, res) => {
 
   //wait for all promises to be resolved and then render server side
   Promise.all(promises).then(() => {
+    //context for error handling
+    const context = {};
+    const content = renderer(req, store, context);
+    if(context.notFound){
+      res.status(404)
+    }
     //static router need to know the current path, BrowserRouter knows this out of the box
-    res.send(renderer(req, store));
+    res.send(content);
   });
 });
 
