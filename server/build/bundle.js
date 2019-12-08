@@ -177,10 +177,19 @@ app.use(_express2.default.static("public"));
 //look for all routes
 app.get("*", function (req, res) {
   var store = (0, _createStore2.default)();
-  (0, _reactRouterConfig.matchRoutes)(_Routes2.default, req.path);
+  var promises = (0, _reactRouterConfig.matchRoutes)(_Routes2.default, req.path).map(function (_ref) {
+    var route = _ref.route;
 
-  //static router need to know the current path, BrowserRouter knows this out of the box
-  res.send((0, _renderer2.default)(req, store));
+    // console.log(route)
+    return route.loadData ? route.loadData(store) : null;
+  });
+  // console.log(matchRoutes(Routes,req.path))
+  // console.log(promises)
+  //wait for all promises to be resolved and then render server side
+  Promise.all(promises).then(function () {
+    //static router need to know the current path, BrowserRouter knows this out of the box
+    res.send((0, _renderer2.default)(req, store));
+  });
 });
 
 app.listen(3000, function () {
@@ -285,6 +294,7 @@ exports.default = [{
     component: _Home2.default,
     exact: true
 }, {
+    loadData: _UsersList.loadData,
     path: '/users',
     component: _UsersList2.default
 }];
@@ -337,7 +347,7 @@ exports.default = Home;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.UsersList = undefined;
+exports.loadData = exports.UsersList = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -418,6 +428,14 @@ var UsersList = exports.UsersList = function (_Component) {
 var mapStateToProps = function mapStateToProps(state) {
   //   console.log("map state to props state: ", state);
   return { users: state };
+};
+
+var loadData = exports.loadData = function loadData(store) {
+  // console.log("I'm trying to load some data")
+  //!!!!!when we are in this route manually dispatching action 
+  //in order to get data before rendering component
+  //this return a promise wich is send to index.js
+  return store.dispatch((0, _index.fetchUsers)());
 };
 exports.default = (0, _reactRedux.connect)(mapStateToProps, { fetchUsers: _index.fetchUsers })(UsersList);
 

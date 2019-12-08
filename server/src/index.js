@@ -14,10 +14,17 @@ app.use(express.static("public"));
 //look for all routes
 app.get("*", (req, res) => {
   const store = createStore();
-  matchRoutes(Routes, req.path);
-
-  //static router need to know the current path, BrowserRouter knows this out of the box
-  res.send(renderer(req, store));
+  const promises = matchRoutes(Routes, req.path).map(({ route }) => {
+    // console.log(route)
+    return route.loadData ? route.loadData(store) : null;
+  });
+  // console.log(matchRoutes(Routes,req.path))
+  // console.log(promises)
+  //wait for all promises to be resolved and then render server side
+  Promise.all(promises).then(() => {
+    //static router need to know the current path, BrowserRouter knows this out of the box
+    res.send(renderer(req, store));
+  });
 });
 
 app.listen(3000, () => console.log("app listen on port 3000"));
