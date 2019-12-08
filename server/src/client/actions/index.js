@@ -26,3 +26,18 @@ export const fetchCurrentUser = () => async (
     payload: res
   });
 };
+export const FETCH_ADMINS = "fetch_admins";
+
+export const fetchAdmins = () => async (
+  dispatch,
+  getState,
+  axiosInstance
+) => {
+  const res = await axiosInstance.get("/admins");
+  // console.log('action url',res.config.url)
+  // console.log('action data',res.data)
+  dispatch({
+    type: FETCH_ADMINS,
+    payload: res
+  });
+};
