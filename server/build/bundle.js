@@ -341,6 +341,15 @@ app.get("*", function (req, res) {
 
     // console.log(route)
     return route.loadData ? route.loadData(store) : null;
+  }) //wrap all promises with new Promise so if there are more external loading some can be resolved
+  .map(function (promise) {
+    //handle null values
+    if (promise) {
+      return new Promise(function (resolve, reject) {
+        //always resolve the inner promise
+        promise.then(resolve).catch(resolve);
+      });
+    }
   });
   // console.log(matchRoutes(Routes,req.path))
   // console.log(promises)

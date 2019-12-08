@@ -29,10 +29,20 @@ app.get("*", (req, res) => {
   //pass req object to create store to get the cookies later
   const store = createStore(req);
 
-  const promises = matchRoutes(Routes, req.path).map(({ route }) => {
-    // console.log(route)
-    return route.loadData ? route.loadData(store) : null;
-  });
+  const promises = matchRoutes(Routes, req.path)
+    .map(({ route }) => {
+      // console.log(route)
+      return route.loadData ? route.loadData(store) : null;
+    }) //wrap all promises with new Promise so if there are more external loading some can be resolved
+    .map(promise => {
+      //handle null values
+      if (promise) {
+        return new Promise((resolve, reject) => {
+          //always resolve the inner promise
+          promise.then(resolve).catch(resolve);
+        });
+      }
+    });
   // console.log(matchRoutes(Routes,req.path))
   // console.log(promises)
 
@@ -41,8 +51,8 @@ app.get("*", (req, res) => {
     //context for error handling
     const context = {};
     const content = renderer(req, store, context);
-    if(context.notFound){
-      res.status(404)
+    if (context.notFound) {
+      res.status(404);
     }
     //static router need to know the current path, BrowserRouter knows this out of the box
     res.send(content);
