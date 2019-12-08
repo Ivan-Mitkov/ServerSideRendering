@@ -3,12 +3,25 @@ import "babel-polyfill";
 //webpack is doing it's magic by looking after server side js:)
 import express from "express";
 import { matchRoutes } from "react-router-config";
+import proxy from "express-http-proxy";
 import Routes from "./client/Routes";
 import renderer from "./helpers/renderer";
-
+import API_URL from "../config";
 import createStore from "./helpers/createStore";
 
 const app = express();
+
+//use proxy for authentication in middleware
+app.use(
+  "/api",
+  proxy(`${API_URL}`, {
+    proxyReqOptDecorator(opts) {
+      opts.header["x-forwarded-host"] = "localhost:3000";
+      return opts;
+    }
+  })
+);
+
 //tell express to open public folder to the world
 app.use(express.static("public"));
 //look for all routes
@@ -20,6 +33,7 @@ app.get("*", (req, res) => {
   });
   // console.log(matchRoutes(Routes,req.path))
   // console.log(promises)
+
   //wait for all promises to be resolved and then render server side
   Promise.all(promises).then(() => {
     //static router need to know the current path, BrowserRouter knows this out of the box

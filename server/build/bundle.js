@@ -154,6 +154,10 @@ var _express2 = _interopRequireDefault(_express);
 
 var _reactRouterConfig = __webpack_require__(18);
 
+var _expressHttpProxy = __webpack_require__(24);
+
+var _expressHttpProxy2 = _interopRequireDefault(_expressHttpProxy);
+
 var _Routes = __webpack_require__(9);
 
 var _Routes2 = _interopRequireDefault(_Routes);
@@ -162,6 +166,10 @@ var _renderer = __webpack_require__(7);
 
 var _renderer2 = _interopRequireDefault(_renderer);
 
+var _config = __webpack_require__(13);
+
+var _config2 = _interopRequireDefault(_config);
+
 var _createStore = __webpack_require__(14);
 
 var _createStore2 = _interopRequireDefault(_createStore);
@@ -169,10 +177,19 @@ var _createStore2 = _interopRequireDefault(_createStore);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var app = (0, _express2.default)();
-//tell express to open public folder to the world
+
+//use proxy for authentication in middleware
 
 
 //webpack is doing it's magic by looking after server side js:)
+app.use("/api", (0, _expressHttpProxy2.default)("" + _config2.default, {
+  proxyReqOptDecorator: function proxyReqOptDecorator(opts) {
+    opts.header["x-forwarded-host"] = "localhost:3000";
+    return opts;
+  }
+}));
+
+//tell express to open public folder to the world
 app.use(_express2.default.static("public"));
 //look for all routes
 app.get("*", function (req, res) {
@@ -185,6 +202,7 @@ app.get("*", function (req, res) {
   });
   // console.log(matchRoutes(Routes,req.path))
   // console.log(promises)
+
   //wait for all promises to be resolved and then render server side
   Promise.all(promises).then(function () {
     //static router need to know the current path, BrowserRouter knows this out of the box
@@ -545,6 +563,12 @@ exports.default = {
 /***/ (function(module, exports) {
 
 module.exports = require("serialize-javascript");
+
+/***/ }),
+/* 24 */
+/***/ (function(module, exports) {
+
+module.exports = require("express-http-proxy");
 
 /***/ })
 /******/ ]);
