@@ -40,11 +40,14 @@ const mapStateToProps = state => {
   return { users: state };
 };
 
-export const loadData = store => {
+ const loadData = store => {
   // console.log("I'm trying to load some data")
   //!!!!!when we are in this route manually dispatching action 
   //in order to get data before rendering component
   //this return a promise wich is send to index.js
   return store.dispatch(fetchUsers());
 };
-export default connect(mapStateToProps, { fetchUsers })(UsersList);
+export default {
+  loadData,
+  component:connect(mapStateToProps, { fetchUsers })(UsersList)
+};

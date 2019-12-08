@@ -11,4 +11,4 @@ return(
 )
 }
 
-export default Home;
+export default {component:Home};
