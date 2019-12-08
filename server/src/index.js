@@ -16,7 +16,7 @@ app.use(
   "/api",
   proxy(`${API_URL}`, {
     proxyReqOptDecorator(opts) {
-      opts.header["x-forwarded-host"] = "localhost:3000";
+      opts.headers["x-forwarded-host"] = "localhost:3000";
       return opts;
     }
   })
@@ -26,7 +26,8 @@ app.use(
 app.use(express.static("public"));
 //look for all routes
 app.get("*", (req, res) => {
-  const store = createStore();
+  //pass req object to create store to get the cookies later
+  const store = createStore(req);
   const promises = matchRoutes(Routes, req.path).map(({ route }) => {
     // console.log(route)
     return route.loadData ? route.loadData(store) : null;
