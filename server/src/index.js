@@ -50,7 +50,16 @@ app.get("*", (req, res) => {
   Promise.all(promises).then(() => {
     //context for error handling
     const context = {};
+
     const content = renderer(req, store, context);
+    //context object get properties from Redirect from react-router-dom
+    console.log("context: ", context);
+
+    if (context.url) {
+      //handle Redirect server side 
+      //res.redirect default status code is 302 if put 301 here there is problem with browser cach
+      return res.redirect(context.url);
+    }
     if (context.notFound) {
       res.status(404);
     }
