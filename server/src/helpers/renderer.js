@@ -4,6 +4,7 @@ import { StaticRouter } from "react-router-dom";
 import { renderRoutes } from "react-router-config";
 import { Provider } from "react-redux";
 import serialize from "serialize-javascript";
+import {Helmet} from 'react-helmet';
 import Routes from "../client/Routes";
 
 //pass req object from server
@@ -18,8 +19,13 @@ const renderer = (req, store,context) => {
       </StaticRouter>
     </Provider>
   );
+//instance of helmet tags
+  const helmet =Helmet.renderStatic();
   return `<html>
-     <head></head>
+     <head>
+     ${helmet.title.toString()}
+     ${helmet.meta.toString()}
+     </head>
     <body>
         <div id="root">${content}</div>
         <script>

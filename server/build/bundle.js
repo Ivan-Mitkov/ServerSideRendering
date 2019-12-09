@@ -573,6 +573,8 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactRedux = __webpack_require__(2);
 
+var _reactHelmet = __webpack_require__(29);
+
 var _index = __webpack_require__(1);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -618,6 +620,20 @@ var UsersList = exports.UsersList = function (_Component) {
       this.props.fetchUsers();
     }
   }, {
+    key: "head",
+    value: function head() {
+      return _react2.default.createElement(
+        _reactHelmet.Helmet,
+        null,
+        _react2.default.createElement(
+          "title",
+          null,
+          this.props.users.length + " Users list"
+        ),
+        _react2.default.createElement("meta", { property: "og:title", content: "Users Page" })
+      );
+    }
+  }, {
     key: "render",
     value: function render() {
       // console.log("render: ", this.props.users);
@@ -626,10 +642,11 @@ var UsersList = exports.UsersList = function (_Component) {
       return _react2.default.createElement(
         "div",
         null,
+        this.head(),
         _react2.default.createElement(
           "div",
           null,
-          "Users list"
+          " Users list"
         ),
         _react2.default.createElement(
           "ul",
@@ -890,6 +907,8 @@ var _serializeJavascript = __webpack_require__(21);
 
 var _serializeJavascript2 = _interopRequireDefault(_serializeJavascript);
 
+var _reactHelmet = __webpack_require__(29);
+
 var _Routes = __webpack_require__(5);
 
 var _Routes2 = _interopRequireDefault(_Routes);
@@ -912,7 +931,9 @@ var renderer = function renderer(req, store, context) {
       )
     )
   ));
-  return "<html>\n     <head></head>\n    <body>\n        <div id=\"root\">" + content + "</div>\n        <script>\n            window.INITIAL_STATE=" + (0, _serializeJavascript2.default)(store.getState()) + "\n            </script>\n       <script src=\"bundle.js\"></script>\n    </body>\n  </html>\n  ";
+  //instance of helmet tags
+  var helmet = _reactHelmet.Helmet.renderStatic();
+  return "<html>\n     <head>\n     " + helmet.title.toString() + "\n     " + helmet.meta.toString() + "\n     </head>\n    <body>\n        <div id=\"root\">" + content + "</div>\n        <script>\n            window.INITIAL_STATE=" + (0, _serializeJavascript2.default)(store.getState()) + "\n            </script>\n       <script src=\"bundle.js\"></script>\n    </body>\n  </html>\n  ";
 };
 
 exports.default = renderer;
@@ -1092,6 +1113,12 @@ exports.default = function () {
       return state;
   }
 };
+
+/***/ }),
+/* 29 */
+/***/ (function(module, exports) {
+
+module.exports = require("react-helmet");
 
 /***/ })
 /******/ ]);

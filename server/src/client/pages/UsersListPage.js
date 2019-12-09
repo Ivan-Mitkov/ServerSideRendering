@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import {Helmet} from 'react-helmet'
 import { fetchUsers } from "../actions/index";
 
 const Users = props => {
@@ -23,12 +24,22 @@ export class UsersList extends Component {
     this.props.fetchUsers();
   }
 
+  head(){
+    return(
+      <Helmet>
+      <title>{`${this.props.users.length} Users list`}</title>
+      <meta property="og:title" content='Users Page'></meta>
+    </Helmet>
+    )
+  }
+
   render() {
     // console.log("render: ", this.props.users);
     const { users } = this.props;
     return (
       <div>
-        <div>Users list</div>
+       {this.head()}
+        <div> Users list</div>
         <ul>
           <Users users={users} />
         </ul>
